@@ -178,6 +178,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.webkit.*
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -232,6 +233,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupWebView()
+        setupBackPressHandler()
     }
 
     private fun setupWebView() {
@@ -243,8 +245,6 @@ class MainActivity : AppCompatActivity() {
             domStorageEnabled = true
             allowFileAccess = true
             allowContentAccess = true
-            allowFileAccessFromFileURLs = true
-            allowUniversalAccessFromFileURLs = true
             mediaPlaybackRequiresUserGesture = false
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             cacheMode = WebSettings.LOAD_DEFAULT
@@ -340,12 +340,16 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    override fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            super.onBackPressed()
-        }
+    private fun setupBackPressHandler() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (webView.canGoBack()) {
+                    webView.goBack()
+                } else {
+                    finish()
+                }
+            }
+        })
     }
 }
 ```
@@ -363,8 +367,11 @@ webView.settings.apply {
 ```
 - **javaScriptEnabled**: Enables JavaScript execution
 - **domStorageEnabled**: Enables DOM storage API
-- **allowFileAccess**: Allows file access from file URLs
-- **mediaPlaybackRequiresUserGesture**: Allows autoplay without user interaction
+- **allowFileAccess**: Allows file access for the WebView
+- **allowContentAccess**: Enables content URL access within WebView
+- **mediaPlaybackRequiresUserGesture**: Allows media autoplay without user interaction
+- **mixedContentMode**: Allows loading HTTP content on HTTPS pages
+- **setGeolocationEnabled**: Enables geolocation API
 
 ### 2. WebChromeClient
 Handles advanced WebView features:
