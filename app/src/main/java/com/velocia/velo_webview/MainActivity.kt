@@ -132,7 +132,8 @@ class MainActivity : AppCompatActivity() {
 
         webView.webViewClient = WebViewClient()
 
-        webView.loadUrl("https://webapp.dev.velocia.io")
+        // Replace with your web application URL
+        webView.loadUrl("YOUR_WEBAPP_URL_HERE")
     }
 
     private fun openFileChooser() {
@@ -148,7 +149,7 @@ class MainActivity : AppCompatActivity() {
             cameraPhotoPath = photoFile.absolutePath
             val photoURI: Uri = FileProvider.getUriForFile(
                 this,
-                "com.velocia.velo_webview.fileprovider",
+                "$packageName.fileprovider",
                 photoFile
             )
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
