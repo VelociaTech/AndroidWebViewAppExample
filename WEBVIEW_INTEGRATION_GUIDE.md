@@ -21,7 +21,6 @@ Add the following permissions to your `AndroidManifest.xml`:
 
     <!-- Required permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -137,21 +136,6 @@ class YourActivity : AppCompatActivity() {
         }
     }
 
-    private val audioPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            pendingPermissionRequest?.let { request ->
-                request.grant(arrayOf(PermissionRequest.RESOURCE_AUDIO_CAPTURE))
-                pendingPermissionRequest = null
-            }
-        } else {
-            pendingPermissionRequest?.deny()
-            pendingPermissionRequest = null
-            Toast.makeText(this, "Audio permission is required for this feature", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private val fileChooserLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -234,16 +218,6 @@ private fun setupWebView() {
                             } else {
                                 pendingPermissionRequest = request
                                 cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                            }
-                            return@runOnUiThread
-                        }
-                        PermissionRequest.RESOURCE_AUDIO_CAPTURE -> {
-                            if (ContextCompat.checkSelfPermission(this@YourActivity, Manifest.permission.RECORD_AUDIO)
-                                == PackageManager.PERMISSION_GRANTED) {
-                                request.grant(arrayOf(PermissionRequest.RESOURCE_AUDIO_CAPTURE))
-                            } else {
-                                pendingPermissionRequest = request
-                                audioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
                             }
                             return@runOnUiThread
                         }

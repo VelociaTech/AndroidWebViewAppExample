@@ -45,21 +45,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val audioPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            pendingPermissionRequest?.let { request ->
-                request.grant(arrayOf(PermissionRequest.RESOURCE_AUDIO_CAPTURE))
-                pendingPermissionRequest = null
-            }
-        } else {
-            pendingPermissionRequest?.deny()
-            pendingPermissionRequest = null
-            Toast.makeText(this, "Audio permission is required for this feature", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private val fileChooserLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -135,16 +120,6 @@ class MainActivity : AppCompatActivity() {
                                 } else {
                                     pendingPermissionRequest = request
                                     cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                                }
-                                return@runOnUiThread
-                            }
-                            PermissionRequest.RESOURCE_AUDIO_CAPTURE -> {
-                                if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.RECORD_AUDIO)
-                                    == PackageManager.PERMISSION_GRANTED) {
-                                    request.grant(arrayOf(PermissionRequest.RESOURCE_AUDIO_CAPTURE))
-                                } else {
-                                    pendingPermissionRequest = request
-                                    audioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
                                 }
                                 return@runOnUiThread
                             }
