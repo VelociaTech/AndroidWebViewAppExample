@@ -1,7 +1,14 @@
-# Android WebView Camera Access Implementation Guide
+# Android WebView Camera Access Implementation Guide (Minimum requirements for Velocia WebApp)
 
 ## Overview
 This guide provides step-by-step instructions for implementing camera access and file upload functionality in an Android app that hosts a web application in a WebView. This enables the web application to request and use the device's camera through proper native permission handling.
+
+## What You'll Add to Your Existing App
+- Camera and storage permissions
+- FileProvider for secure file sharing
+- WebView with JavaScript enabled
+- Camera permission handling for web content
+- File upload support (camera + gallery)
 
 ## Prerequisites
 - Android Studio Arctic Fox or later
@@ -9,79 +16,31 @@ This guide provides step-by-step instructions for implementing camera access and
 - Web application that requires camera access
 - Android SDK minimum version 21 (Android 5.0)
 
-## Implementation Steps
+## Implementation Steps (If you already have a WebView setup in your native application, please reference the basic configuration below and add any missing parts if necessary)
 
 ### Step 1: Update AndroidManifest.xml
 
-Add required permissions and FileProvider configuration to your app's AndroidManifest.xml.
-
-**Original starter AndroidManifest.xml:**
+Add the following permissions and FileProvider configuration to your AndroidManifest.xml:
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- Add these permissions before <application> tag -->
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.INTERNET" />
 
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/Theme.YourApp">
+<!-- Camera feature (optional) -->
+<uses-feature android:name="android.hardware.camera" android:required="false" />
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-    </application>
-</manifest>
-```
-
-**Update to:**
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <!-- Required permissions -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- Camera feature (optional) -->
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/Theme.YourApp">
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <!-- FileProvider for secure file sharing -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-
-    </application>
-</manifest>
+<!-- Add this provider inside your <application> tag -->
+<provider
+    android:name="androidx.core.content.FileProvider"
+    android:authorities="${applicationId}.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/file_paths" />
+</provider>
 ```
 
 ### Step 2: Create File Provider Configuration
@@ -99,31 +58,7 @@ Create a new XML resource file for FileProvider paths.
 
 ### Step 3: Update Layout File
 
-Replace the default layout with a WebView.
-
-**Original starter layout (activity_main.xml):**
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
-```
-
-**Replace with:**
+Create or update your activity layout file (res/layout/activity_main.xml) to include a WebView:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -148,24 +83,7 @@ Replace the default layout with a WebView.
 
 ### Step 4: Update MainActivity.kt
 
-Replace the default MainActivity with WebView implementation and camera handling.
-
-**Original starter MainActivity.kt:**
-```kotlin
-package com.yourcompany.yourapp
-
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-    }
-}
-```
-
-**Replace with:**
+Update your MainActivity with the following WebView implementation and camera handling:
 ```kotlin
 package com.yourcompany.yourapp
 
