@@ -6,7 +6,7 @@ This guide provides step-by-step instructions for implementing camera access and
 ## What You'll Add to Your Existing App
 - Camera and storage permissions
 - FileProvider for secure file sharing
-- WebView with JavaScript enabled
+- WebView with JavaScript enabled (if it does not exist already)
 - Camera permission handling for web content
 - File upload support (camera + gallery)
 
@@ -56,7 +56,7 @@ Create a new XML resource file for FileProvider paths.
 </paths>
 ```
 
-### Step 3: Update Layout File
+### Step 3: Update Layout File (if a WebView does not already exist)
 
 Create or update your activity layout file (res/layout/activity_main.xml) to include a WebView:
 ```xml
@@ -382,40 +382,6 @@ override fun onPermissionRequest(request: PermissionRequest) {
 }
 ```
 
-## Minimum Requirements
-
-- **Android API Level**: 21+ (Android 5.0 Lollipop)
-- **Kotlin Version**: 1.5+
-- **AndroidX**: Required for modern Android development
-- **Physical Device**: Camera features require a physical device for testing
-
-## Project Structure
-
-```
-app/
-├── src/
-│   ├── main/
-│   │   ├── java/com/yourcompany/yourapp/
-│   │   │   └── MainActivity.kt
-│   │   ├── res/
-│   │   │   ├── layout/
-│   │   │   │   └── activity_main.xml
-│   │   │   └── xml/
-│   │   │       └── file_paths.xml
-│   │   └── AndroidManifest.xml
-```
-
-## Dependencies
-
-Ensure your app's `build.gradle` includes:
-```gradle
-dependencies {
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    // ... other dependencies
-}
-```
 
 ## Additional Resources
 
